@@ -1,27 +1,24 @@
 package main
 
 import (
-	"GoBookstoreAPI/BookDB"
+	"GoBookstoreAPI/DB"
 	"fmt"
 )
 
 func main() {
 	fmt.Println("hehe")
-	BookDB.Init()
-	var books = BookDB.BookDB
+	DB.Init()
+	var books = DB.BookDB
 
 	for i := 0; i < 5; i++ {
-		myBook := BookDB.Book{
+		myBook := DB.Book{
 			Name: "hehe",
 		}
-		myBook.PublishDate = fmt.Sprintf("%d", i)
+		myBook.PublishDate = "abc" + fmt.Sprintf("%d%d%d%d", i, i, i, i) + "def"
 		a, _ := books.AddBook(&myBook)
 		fmt.Println(a)
-		fmt.Println(books.UUID_Exists(&a))
+		fmt.Println(books.Book_Exists(a))
 	}
 
-	fmt.Println(len(books.Books))
-
-	fmt.Println(books.GetAllBooksAsJson())
-
+	fmt.Println(books.GetBookList())
 }
