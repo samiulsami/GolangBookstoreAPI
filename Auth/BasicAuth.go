@@ -52,6 +52,7 @@ func BasicAuth(next http.Handler) http.Handler {
 			return
 		}
 
+		req.Header.Add("username", username)
 		next.ServeHTTP(res, req)
 	})
 }
