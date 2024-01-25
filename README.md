@@ -10,7 +10,7 @@ A simple REST API written in Go
 
 `go install GoBookstoreAPI`
 
-`GoBookstoreAPI bookstore -port=3000`
+`GoBookstoreAPI bookstore --port=3000`
 
 ## API Endpoints
 
