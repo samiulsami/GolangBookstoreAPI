@@ -10,7 +10,7 @@ A simple REST API written in Go
 
 `go install GoBookstoreAPI`
 
-`GoBookstoreAPI bookstore --port=3000`
+`GoBookstoreAPI serve --port=3000`
 
 ## API Endpoints
 
@@ -37,7 +37,7 @@ A simple REST API written in Go
 ``````
 
 ## Some cURL commands
-#### Login to receive a JWT $TOKEN and set cookie (username: @dminUSERname, password: strongpassword)
+#### Login using the credentials in the example .env file to receive a JWT $TOKEN and set cookie
 ```
 curl --location 'http://localhost:3000/api/v1/get-token' \
 --header 'Authorization: Basic QGRtaW5VU0VSbmFtZTpzdHJvbmdwYXNzd29yZA=='
