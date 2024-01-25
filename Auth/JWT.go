@@ -1,6 +1,7 @@
 package Auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang-jwt/jwt/v5/request"
@@ -24,18 +25,21 @@ func init() {
 
 // /Sets cookie and returns the JWT token
 func GetJWTToken(res http.ResponseWriter, req *http.Request) {
-	username := req.Header.Get("username")
-	if username == "" {
-		res.Write([]byte("This should be impossible"))
-		res.WriteHeader(http.StatusUnauthorized)
-		return
+	var bodyMap map[string]string
+	err := json.NewDecoder(req.Body).Decode(&bodyMap)
+
+	var username string = ""
+	if err != nil {
+		username = "DefaultUsername"
+	} else if name, ok := bodyMap["username"]; ok {
+		username = name
 	}
 
 	token, err := createToken(username)
 
 	if err != nil {
-		res.Write([]byte("Unable to create bearer token"))
 		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte("Unable to create bearer token"))
 	}
 
 	cookie := http.Cookie{
@@ -46,8 +50,8 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 	}
 
 	http.SetCookie(res, &cookie)
-	res.Write([]byte("Bearer Token: " + token + "\nCookie set"))
 	res.WriteHeader(http.StatusOK)
+	res.Write([]byte("Bearer Token: " + token + "\nCookie set"))
 }
 
 func JWTAuthenticator(next http.Handler) http.Handler {
@@ -60,8 +64,8 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 		case nil:
 			valid, err := verifyToken(bearerToken)
 			if err != nil || !valid {
-				res.Write([]byte("invalid bearer token"))
 				res.WriteHeader(http.StatusUnauthorized)
+				res.Write([]byte("Invalid bearer token"))
 				return
 			}
 
@@ -72,8 +76,8 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 			cookie, err := req.Cookie("jwt")
 
 			if err != nil {
-				res.Write([]byte("Cookie is invalid or nonexistent"))
 				res.WriteHeader(http.StatusBadRequest)
+				res.Write([]byte("Cookie is invalid or nonexistent"))
 				return
 			}
 
@@ -81,14 +85,14 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 			valid, err := verifyToken(token)
 
 			if err != nil {
-				fmt.Println(err)
 				res.WriteHeader(http.StatusBadRequest)
+				fmt.Println(err)
 				return
 			}
 
 			if !valid {
-				res.Write([]byte("Authorization failed"))
 				res.WriteHeader(http.StatusUnauthorized)
+				res.Write([]byte("Authorization failed"))
 				return
 			}
 			next.ServeHTTP(res, req)
@@ -130,7 +134,7 @@ func verifyToken(tokenString string) (bool, error) {
 	if remainingSeconds <= 0 {
 		return false, nil
 	}
-	fmt.Printf("Remaining time: %d hours %d minutes and %d seconds\n", remainingSeconds/3600, (remainingSeconds%3600)/60, remainingSeconds%60)
+	fmt.Printf("JWT Token validity duration: %d hours %d minutes and %d seconds\n", remainingSeconds/3600, (remainingSeconds%3600)/60, remainingSeconds%60)
 
 	return true, nil
 }

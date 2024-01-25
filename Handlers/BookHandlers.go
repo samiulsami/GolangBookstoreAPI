@@ -13,14 +13,14 @@ func AddBook(res http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
 	if err != nil || !DB.ValidBook(&newBook) {
-		res.Write([]byte("Failed to parse body. Invalid book format"))
 		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return
 	}
 
 	uuid := DB.BookDB.AddBook(&newBook)
-	res.Write([]byte("Book added. UUID: " + uuid))
 	res.WriteHeader(http.StatusCreated)
+	res.Write([]byte("Book added. UUID: " + uuid))
 }
 
 func GetBook(res http.ResponseWriter, req *http.Request) {
@@ -33,13 +33,13 @@ func GetBook(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res.Write(body)
 	res.WriteHeader(http.StatusOK)
+	res.Write(body)
 }
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request) {
-	res.Write(DB.BookDB.GetBookList())
 	res.WriteHeader(http.StatusOK)
+	res.Write(DB.BookDB.GetBookList())
 }
 
 func DeleteBook(res http.ResponseWriter, req *http.Request) {
@@ -52,8 +52,8 @@ func DeleteBook(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res.Write([]byte("Successfully deleted the book with UUID: " + uuid))
 	res.WriteHeader(http.StatusOK)
+	res.Write([]byte("Successfully deleted the book with UUID: " + uuid))
 }
 
 func UpdateBook(res http.ResponseWriter, req *http.Request) {
@@ -62,8 +62,8 @@ func UpdateBook(res http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
 	if err != nil || !DB.ValidBook(&newBook) {
-		res.Write([]byte("Failed to parse body. Invalid book format"))
 		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return
 	}
 
@@ -71,11 +71,11 @@ func UpdateBook(res http.ResponseWriter, req *http.Request) {
 	done, err := DB.BookDB.UpdateBook(&newBook)
 
 	if err != nil || !done {
-		res.Write([]byte("Book not found"))
 		res.WriteHeader(http.StatusForbidden)
+		res.Write([]byte("Book not found"))
 		return
 	}
 
-	res.Write([]byte("Successfully updated the book with UUID: " + uuid))
 	res.WriteHeader(http.StatusCreated)
+	res.Write([]byte("Successfully updated the book with UUID: " + uuid))
 }
