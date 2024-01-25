@@ -1,19 +1,14 @@
 package Auth
 
 import (
-	"github.com/go-chi/jwtauth/v5"
-	"github.com/lestrrat-go/jwx/v2/jwt"
+	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"time"
 )
 
 var ValidityDurationInSeconds int32 = 300
-var secret string = "orangeCat"
-var tokenAuth *jwtauth.JWTAuth
-
-func Init() {
-	tokenAuth = jwtauth.New("HS256", []byte(secret), nil, jwt.WithAcceptableSkew(30*time.Second))
-}
+var secret []byte = []byte("orangeCat")
 
 // /Sets cookie and returns the JWT token
 func GetJWTToken(res http.ResponseWriter, req *http.Request) {
@@ -24,7 +19,12 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token := createToken(username)
+	token, err := createToken(username)
+
+	if err != nil {
+		res.Write([]byte("Unable to create bearer token"))
+		res.WriteHeader(http.StatusInternalServerError)
+	}
 
 	cookie := http.Cookie{
 		Name:    "jwt",
@@ -38,15 +38,70 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 }
 
-func createToken(username string) string {
+func JWTAuthenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		cookie, err := req.Cookie("jwt")
+
+		if err != nil {
+			res.Write([]byte("Cookie is invalid or nonexistent"))
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		token := cookie.Value
+		valid, err := verifyToken(token)
+
+		if err != nil {
+			fmt.Println(err)
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if !valid {
+			res.Write([]byte("Authorization failed"))
+			res.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(res, req)
+	})
+}
+
+func createToken(username string) (string, error) {
 	exp := time.Now().Add(time.Second * time.Duration(ValidityDurationInSeconds)).Unix()
 	iat := time.Now().Unix()
 
-	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": username,
 		"exp": exp,
 		"iat": iat,
 	})
 
-	return tokenString
+	tokenString, err := token.SignedString(secret)
+	return tokenString, err
+}
+
+func verifyToken(tokenString string) (bool, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return secret, nil
+	})
+	if err != nil {
+		return false, err
+	}
+
+	expInterface, ok := token.Claims.(jwt.MapClaims)["exp"]
+	if !ok {
+		return false, nil
+	}
+
+	remainingSeconds := (int64(expInterface.(float64)) - time.Now().Unix())
+	if remainingSeconds <= 0 {
+		return false, nil
+	}
+	fmt.Printf("Remaining time: %d hours %d minutes and %d seconds\n", remainingSeconds/3600, (remainingSeconds%3600)/60, remainingSeconds%60)
+
+	return true, nil
 }

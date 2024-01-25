@@ -26,8 +26,20 @@ type bookDBType struct {
 var BookDB bookDBType
 var book_not_found_error string = "No books found with the given UUID."
 
-func Init() {
+func init() {
 	BookDB = bookDBType{books: make(map[string]*Book)}
+}
+
+func ValidBook(newBook *Book) bool {
+	if newBook == nil {
+		return false
+	}
+
+	if (*newBook).Name == "" || (*newBook).ISBN == "" || (*newBook).AuthorList == nil || (*newBook).PublishDate == "" {
+		return false
+	}
+
+	return true
 }
 
 func (this *bookDBType) uuid_Exists(uuid *string) bool {
@@ -42,11 +54,7 @@ func (this *bookDBType) Book_Exists(uuid string) bool {
 }
 
 // returns "UUID", error
-func (this *bookDBType) AddBook(newBook *Book) (string, error) {
-	if newBook == nil {
-		return "", errors.New("Book is Null")
-	}
-
+func (this *bookDBType) AddBook(newBook *Book) string {
 	(*this).Lock()
 	defer (*this).Unlock()
 
@@ -56,7 +64,7 @@ func (this *bookDBType) AddBook(newBook *Book) (string, error) {
 	newBook.UUID = newUUID
 	(*this).books[newUUID] = newBook
 
-	return newUUID, nil
+	return newUUID
 }
 
 func (this *bookDBType) DeleteBook(uuid string) (bool, error) {
@@ -84,20 +92,20 @@ func (this *bookDBType) UpdateBook(updatedBook *Book) (bool, error) {
 }
 
 // /returns a single book as json object, if it exists
-func (this *bookDBType) GetBook(uuid string) (string, error) {
+func (this *bookDBType) GetBook(uuid string) ([]byte, error) {
 	(*this).RLock()
 	defer (*this).RUnlock()
 
 	if !(*this).uuid_Exists(&uuid) {
-		return "", errors.New(book_not_found_error)
+		return []byte(""), errors.New(book_not_found_error)
 	}
 
 	tmp, err := json.MarshalIndent((*this).books[uuid], " ", "   ")
 	if err != nil {
-		return "", err
+		return []byte(""), err
 	}
 
-	return string(tmp), nil
+	return tmp, nil
 }
 
 func (this *bookDBType) getAllBooks() ([][]byte, error) {
@@ -117,12 +125,12 @@ func (this *bookDBType) getAllBooks() ([][]byte, error) {
 	return bookList, nil
 }
 
-// returns a json array of books
-func (this *bookDBType) GetBookList() string {
+// returns a json array of books as a byte slice
+func (this *bookDBType) GetBookList() []byte {
 	bytes, err := (*this).getAllBooks()
 	if err != nil {
 		fmt.Println(err)
-		return "[]"
+		return []byte("[]")
 	}
 
 	stringList := []string{}
@@ -131,5 +139,5 @@ func (this *bookDBType) GetBookList() string {
 		stringList = append(stringList, string(v))
 	}
 
-	return string("[\n" + strings.Join(stringList[:], ",\n") + "\n]")
+	return []byte("[\n" + strings.Join(stringList[:], ",\n") + "\n]")
 }

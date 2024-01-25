@@ -1,7 +1,9 @@
 package main
 
-import "GoBookstoreAPI/MyAPI"
+import (
+	"GoBookstoreAPI/Routes"
+)
 
 func main() {
-	MyAPI.StartAPI()
+	Routes.StartAPI()
 }
