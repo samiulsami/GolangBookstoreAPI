@@ -3,6 +3,7 @@ package Auth
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5/request"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -51,30 +52,47 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 
 func JWTAuthenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		cookie, err := req.Cookie("jwt")
 
-		if err != nil {
-			res.Write([]byte("Cookie is invalid or nonexistent"))
-			res.WriteHeader(http.StatusBadRequest)
-			return
+		extractor := request.BearerExtractor{}
+		bearerToken, err := extractor.ExtractToken(req)
+
+		switch err {
+		case nil:
+			valid, err := verifyToken(bearerToken)
+			if err != nil || !valid {
+				res.Write([]byte("invalid bearer token"))
+				res.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			res.WriteHeader(http.StatusOK)
+			next.ServeHTTP(res, req)
+
+		default:
+			cookie, err := req.Cookie("jwt")
+
+			if err != nil {
+				res.Write([]byte("Cookie is invalid or nonexistent"))
+				res.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			token := cookie.Value
+			valid, err := verifyToken(token)
+
+			if err != nil {
+				fmt.Println(err)
+				res.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			if !valid {
+				res.Write([]byte("Authorization failed"))
+				res.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			next.ServeHTTP(res, req)
 		}
-
-		token := cookie.Value
-		valid, err := verifyToken(token)
-
-		if err != nil {
-			fmt.Println(err)
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		if !valid {
-			res.Write([]byte("Authorization failed"))
-			res.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		next.ServeHTTP(res, req)
 	})
 }
 
