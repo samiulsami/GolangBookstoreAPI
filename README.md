@@ -25,6 +25,17 @@ A simple REST API written in Go
 
 ---
 
+## Example Book json object
+``````
+{
+    "uuid": null
+    "name": "The Lord Of The Rings",
+    "authorList": ["J.R.R. Tolkien"],
+    "publishDate": "August 14, 2012",
+    "ISBN": "978-0544003415"
+}
+``````
+
 ## Some cURL commands
 #### Login to receive a JWT $TOKEN and set cookie (username: @dminUSERname, password: strongpassword)
 ```
