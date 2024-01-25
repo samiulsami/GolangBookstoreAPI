@@ -1,6 +1,21 @@
 package DB
 
+import (
+	"github.com/joho/godotenv"
+	"log"
+	"os"
+)
+
 type userDB map[string]string
 
-var _username, _password string = "admin", "admin"
-var Users userDB = userDB{_username: _password}
+var Users userDB
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	Users = make(map[string]string)
+
+	Users[os.Getenv("AdminUsername")] = os.Getenv("AdminPassword")
+}

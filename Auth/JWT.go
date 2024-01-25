@@ -3,12 +3,23 @@ package Auth
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 var ValidityDurationInSeconds int32 = 300
-var secret []byte = []byte("orangeCat")
+var secret []byte
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	secret = []byte(os.Getenv("JWTSECRET"))
+}
 
 // /Sets cookie and returns the JWT token
 func GetJWTToken(res http.ResponseWriter, req *http.Request) {
