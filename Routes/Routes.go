@@ -7,9 +7,7 @@ import (
 	"net/http"
 )
 
-var port string = "3000"
-
-func StartAPI() {
+func StartAPI(port string) {
 	r := chi.NewRouter()
 	r.Use(CommonHeaders)
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"GoBookstoreAPI/Routes"
+	"GoBookstoreAPI/CMD"
 )
 
 func main() {
-	Routes.StartAPI()
+	CMD.Execute()
 }

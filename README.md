@@ -8,8 +8,9 @@ A simple REST API written in Go
 
 `cd GolangBookstoreAPI`
 
-`go run main.go`
+`go install GoBookstoreAPI`
 
+`GoBookstoreAPI bookstore -port=3000`
 
 ## API Endpoints
 
