@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func StartAPI(port string) {
+func StartAPI(host string, port string) {
 	r := chi.NewRouter()
 	r.Use(CommonHeaders)
 
@@ -25,7 +25,7 @@ func StartAPI(port string) {
 		r.Put("/api/v1/books/{id}", Handlers.UpdateBook)
 	})
 
-	http.ListenAndServe("localhost:"+port, r)
+	http.ListenAndServe(host+":"+port, r)
 }
 
 func CommonHeaders(next http.Handler) http.Handler {

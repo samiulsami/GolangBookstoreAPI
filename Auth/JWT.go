@@ -134,7 +134,7 @@ func verifyToken(tokenString string) (bool, error) {
 	if remainingSeconds <= 0 {
 		return false, nil
 	}
-	fmt.Printf("JWT Token validity duration: %d hours %d minutes and %d seconds\n", remainingSeconds/3600, (remainingSeconds%3600)/60, remainingSeconds%60)
+	fmt.Printf("JWT Token validity period: %d hours %d minutes and %d seconds\n", remainingSeconds/3600, (remainingSeconds%3600)/60, remainingSeconds%60)
 
 	return true, nil
 }

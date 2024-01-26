@@ -90,9 +90,15 @@ curl --location --request DELETE 'http://localhost:3000/api/v1/books/{1}' \
 - https://github.com/golang-jwt/jwt
 - https://pkg.go.dev/github.com/golang-jwt/jwt/v5#New
 
-## Download and run Docker Image
+## Build and run Docker Image
 
-TODO
+Create a .env file with the appropriate username, password, and JWTSecretKey (see the .env.example file)
+
+Run the following commands:
+
+``docker build -t gobookstoreapi:latest .``
+
+``docker run -p 3000:3000 gobookstoreapi``
 
 ## Make File
 TODO
