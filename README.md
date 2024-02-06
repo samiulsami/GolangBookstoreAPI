@@ -96,9 +96,13 @@ Create a .env file with the appropriate username, password, and JWTSecretKey (se
 
 Run the following commands:
 
-``docker build -t gobookstoreapi:latest .``
+``docker build -t sami7786/gobookstoreapi:latest .``
 
-``docker run -p 3000:3000 gobookstoreapi``
+``docker run -p 3000:3000 sami7786/gobookstoreapi``
 
-## Make File
-TODO
+## Run using Minikube
+
+``kubectl apply -f deployment.yaml``
+``kubectl get pods``
+``kubectl logs -f $pod_name``
+``kubectl port-forward $pod_name 3000:3000``

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gobookstoreapi
+spec:
+  selector:
+    matchLabels:
+      app: gobookstoreapi
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: gobookstoreapi
+    spec:
+      containers:
+        - name: my-app
+          image: sami7786/gobookstoreapi:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
