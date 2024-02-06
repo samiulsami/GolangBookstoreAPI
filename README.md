@@ -103,6 +103,9 @@ Run the following commands:
 ## Run using Minikube
 
 ``kubectl apply -f deployment.yaml``
+
 ``kubectl get pods``
+
 ``kubectl logs -f $pod_name``
+
 ``kubectl port-forward $pod_name 3000:3000``
