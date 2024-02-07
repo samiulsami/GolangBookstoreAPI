@@ -100,9 +100,11 @@ Run the following commands:
 
 ``docker run -p 3000:3000 sami7786/gobookstoreapi``
 
-## Run using Minikube
+## Run with kind
 
-``kubectl apply -f deployment.yaml``
+``kind create cluster``
+
+``kubectl apply -f deploy/raw/deployment.yaml``
 
 ``kubectl get pods``
 
