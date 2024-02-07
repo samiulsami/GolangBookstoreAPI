@@ -1,9 +1,9 @@
 package main
 
 import (
-	"GoBookstoreAPI/CMD"
+	"GoBookstoreAPI/cmd"
 )
 
 func main() {
-	CMD.Execute()
+	cmd.Execute()
 }

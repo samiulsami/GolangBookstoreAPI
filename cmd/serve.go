@@ -1,7 +1,7 @@
-package CMD
+package cmd
 
 import (
-	"GoBookstoreAPI/Routes"
+	"GoBookstoreAPI/routes"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
@@ -25,7 +25,7 @@ var serveCmd = &cobra.Command{
 			log.Fatal("port flag not found")
 		}
 		fmt.Println("Bookstore API server started on " + host + ":" + port)
-		Routes.StartAPI(host, port)
+		routes.StartAPI(host, port)
 	},
 }
 

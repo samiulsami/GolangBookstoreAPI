@@ -1,7 +1,7 @@
-package Auth
+package auth
 
 import (
-	"GoBookstoreAPI/DB"
+	"GoBookstoreAPI/db"
 	"encoding/base64"
 	"net/http"
 	"strings"
@@ -46,7 +46,7 @@ func BasicAuth(next http.Handler) http.Handler {
 
 		username, password := decodedString[:idx], decodedString[idx+1:]
 
-		if pass, ok := DB.Users[username]; !ok || pass != password {
+		if pass, ok := db.Users[username]; !ok || pass != password {
 			res.WriteHeader(http.StatusUnauthorized)
 			res.Write([]byte("Invalid Credentials"))
 			return

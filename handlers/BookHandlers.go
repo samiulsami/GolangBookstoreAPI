@@ -1,7 +1,7 @@
-package Handlers
+package handlers
 
 import (
-	"GoBookstoreAPI/DB"
+	"GoBookstoreAPI/db"
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
@@ -9,23 +9,23 @@ import (
 )
 
 func AddBook(res http.ResponseWriter, req *http.Request) {
-	var newBook DB.Book
+	var newBook db.Book
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
-	if err != nil || !DB.ValidBook(&newBook) {
+	if err != nil || !db.ValidBook(&newBook) {
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return
 	}
 
-	uuid := DB.BookDB.AddBook(&newBook)
+	uuid := db.BookDB.AddBook(&newBook)
 	res.WriteHeader(http.StatusCreated)
 	res.Write([]byte("Book added. UUID: " + uuid))
 }
 
 func GetBook(res http.ResponseWriter, req *http.Request) {
 	uuid := chi.URLParam(req, "id")
-	body, err := DB.BookDB.GetBook(uuid)
+	body, err := db.BookDB.GetBook(uuid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -39,12 +39,12 @@ func GetBook(res http.ResponseWriter, req *http.Request) {
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
-	res.Write(DB.BookDB.GetBookList())
+	res.Write(db.BookDB.GetBookList())
 }
 
 func DeleteBook(res http.ResponseWriter, req *http.Request) {
 	uuid := chi.URLParam(req, "id")
-	done, err := DB.BookDB.DeleteBook(uuid)
+	done, err := db.BookDB.DeleteBook(uuid)
 
 	if err != nil || !done {
 		fmt.Println(err)
@@ -58,17 +58,17 @@ func DeleteBook(res http.ResponseWriter, req *http.Request) {
 
 func UpdateBook(res http.ResponseWriter, req *http.Request) {
 	uuid := chi.URLParam(req, "id")
-	var newBook DB.Book
+	var newBook db.Book
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
-	if err != nil || !DB.ValidBook(&newBook) {
+	if err != nil || !db.ValidBook(&newBook) {
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return
 	}
 
 	newBook.UUID = uuid
-	done, err := DB.BookDB.UpdateBook(&newBook)
+	done, err := db.BookDB.UpdateBook(&newBook)
 
 	if err != nil || !done {
 		res.WriteHeader(http.StatusForbidden)
