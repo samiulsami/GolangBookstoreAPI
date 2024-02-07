@@ -3,7 +3,7 @@ WORKDIR /src
 COPY . .
 RUN go build . 
 
-FROM alpine
+FROM busybox
 WORKDIR /compiled
 ENV BOOKSTORE_LISTEN=0.0.0.0
 COPY --from=builder /src/GoBookstoreAPI /src/.env /compiled/

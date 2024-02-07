@@ -48,7 +48,7 @@ func DeleteBook(res http.ResponseWriter, req *http.Request) {
 
 	if err != nil || !done {
 		fmt.Println(err)
-		res.WriteHeader(http.StatusForbidden)
+		res.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -71,7 +71,7 @@ func UpdateBook(res http.ResponseWriter, req *http.Request) {
 	done, err := db.BookDB.UpdateBook(&newBook)
 
 	if err != nil || !done {
-		res.WriteHeader(http.StatusForbidden)
+		res.WriteHeader(http.StatusNotFound)
 		res.Write([]byte("Book not found"))
 		return
 	}
