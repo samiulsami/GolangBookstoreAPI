@@ -12,7 +12,7 @@ func AddBook(res http.ResponseWriter, req *http.Request) {
 	var newBook db.Book
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
-	if err != nil || !db.ValidBook(&newBook) {
+	if err != nil || !newBook.IsValid() {
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return
@@ -61,7 +61,7 @@ func UpdateBook(res http.ResponseWriter, req *http.Request) {
 	var newBook db.Book
 	err := json.NewDecoder(req.Body).Decode(&newBook)
 
-	if err != nil || !db.ValidBook(&newBook) {
+	if err != nil || !newBook.IsValid() {
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write([]byte("Failed to parse body. Invalid book format"))
 		return

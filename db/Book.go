@@ -30,12 +30,12 @@ func init() {
 	BookDB = bookDBType{books: make(map[string]*Book)}
 }
 
-func ValidBook(newBook *Book) bool {
-	if newBook == nil {
+func (this *Book) IsValid() bool {
+	if this == nil {
 		return false
 	}
 
-	if newBook.Name == "" || newBook.ISBN == "" || newBook.AuthorList == nil || newBook.PublishDate == "" {
+	if this.Name == "" || this.ISBN == "" || this.AuthorList == nil || this.PublishDate == "" {
 		return false
 	}
 
