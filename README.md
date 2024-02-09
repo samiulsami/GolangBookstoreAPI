@@ -100,14 +100,20 @@ Run the following commands:
 
 ``docker run -p 3000:3000 sami7786/gobookstoreapi``
 
-## Run with kind
+## Run with Kind
 
 ``kind create cluster``
 
 ``kubectl apply -f deploy/raw/deployment.yaml``
 
-``kubectl get pods``
+~~kubectl get pods~~
 
-``kubectl logs -f $pod_name``
+~~kubectl logs -f $pod_name~~
 
-``kubectl port-forward $pod_name 3000:3000``
+~~kubectl port-forward $pod_name 3000:3000~~
+
+``kubectl get nodes -o wide``
+
+The API endpoints are exposed on the internal IP of the node on port 30000
+
+``kubectl delete deployment --all``
