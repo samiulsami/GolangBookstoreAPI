@@ -117,3 +117,7 @@ Run the following commands:
 The API endpoints are exposed on the internal IP of the node on port 30000
 
 ``kubectl delete deployment --all``
+
+## Run using Helm chart
+
+``helm install bookstorehelm deploy/helm``
