@@ -29,4 +29,9 @@ spec:
                 secretKeyRef:
                   key: adminPassword
                   name: {{ .Values.secret.name}}
+            - name: JWTSECRET
+              valueFrom:
+                secretKeyRef:
+                  key: jwtSecret
+                  name: {{ .Values.secret.name}}
 

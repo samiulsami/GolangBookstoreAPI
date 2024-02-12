@@ -33,6 +33,8 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 		username = "DefaultUsername"
 	} else if name, ok := bodyMap["username"]; ok {
 		username = name
+	} else {
+		username = os.Getenv("username")
 	}
 
 	token, err := createToken(username)

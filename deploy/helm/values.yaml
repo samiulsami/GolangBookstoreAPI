@@ -16,7 +16,8 @@ secret:
   namespace: default
   data:
     adminUsername: admin22
-    adminPassword: admin
+    adminPassword: admin72
+    jwtSecret: orangeCat
 
 image:
   name: sami7786/gobookstoreapi
