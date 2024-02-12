@@ -1,7 +1,7 @@
 FROM golang:alpine AS builder
 WORKDIR /src
 COPY . .
-RUN go build . 
+RUN go build .
 
 FROM busybox
 WORKDIR /compiled

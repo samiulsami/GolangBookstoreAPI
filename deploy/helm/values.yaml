@@ -1,0 +1,16 @@
+appName: gobookstoreapi
+containerName: my-app
+replicas: 3
+
+serviceName: gobookstoreapi-service
+imagePullPolicy: IfNotPresent
+specType: LoadBalancer
+ports:
+  protocol: TCP
+  containerPort: 3000
+  targetPort: 3000
+  nodePort: 30000
+
+image:
+  name: sami7786/gobookstoreapi
+  tag: latest
