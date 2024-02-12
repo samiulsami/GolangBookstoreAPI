@@ -18,3 +18,15 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.ports.containerPort }}
+          env:
+            - name: AdminUsername
+              valueFrom:
+                secretKeyRef:
+                  key: adminUsername
+                  name: {{ .Values.secret.name}}
+            - name: AdminPassword
+              valueFrom:
+                secretKeyRef:
+                  key: adminPassword
+                  name: {{ .Values.secret.name}}
+

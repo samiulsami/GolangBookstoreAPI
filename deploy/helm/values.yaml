@@ -11,6 +11,13 @@ ports:
   targetPort: 3000
   nodePort: 30000
 
+secret:
+  name: env-secrets
+  namespace: default
+  data:
+    adminUsername: admin22
+    adminPassword: admin
+
 image:
   name: sami7786/gobookstoreapi
   tag: latest
