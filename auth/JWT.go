@@ -34,7 +34,7 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 	} else if name, ok := bodyMap["username"]; ok {
 		username = name
 	} else {
-		username = os.Getenv("username")
+		username = os.Getenv("AdminUsername")
 	}
 
 	token, err := createToken(username)
