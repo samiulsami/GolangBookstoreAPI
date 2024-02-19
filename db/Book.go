@@ -53,13 +53,13 @@ func (this *bookDBType) BookExists(uuid string) bool {
 	return this.uuidExists(&uuid)
 }
 
-// returns "UUID", error
+// returns "UUID"
 func (this *bookDBType) AddBook(newBook *Book) string {
 	this.Lock()
 	defer this.Unlock()
 
-	var newUUID string
-	for newUUID = (uuid.New()).String(); this.uuidExists(&newUUID); {
+	var newUUID string = (uuid.New()).String()
+	for ; this.uuidExists(&newUUID); newUUID = (uuid.New()).String() {
 	}
 	newBook.UUID = newUUID
 	this.books[newUUID] = newBook
