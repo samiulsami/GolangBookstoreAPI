@@ -124,6 +124,10 @@ The API endpoints are exposed on the internal IP of the node on port 30000
 
 ## Makefile
 
+Push changes to remote repository
+
+``make gitPush commitMessage = "my Message"``
+
 Compile and run the binary:
 
 ``make run``

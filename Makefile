@@ -1,10 +1,10 @@
 #Push changes to remote repository
-
 commitMessage ?= "from makefile"
 gitPush:
 	git add .
 	git commit -m $(commitMessage)
 	git push
+
 #Compile and run the binary
 binaryName ?= GoBookstoreAPI
 $(binaryName):
