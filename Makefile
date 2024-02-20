@@ -1,14 +1,22 @@
-#Compile and run the binary
-all: build run
+#Push changes to remote repository
 
+commitMessage ?= "from makefile"
+gitPush:
+	git add .
+	git commit -m $(commitMessage)
+	git push
+#Compile and run the binary
 binaryName ?= GoBookstoreAPI
 $(binaryName):
 	go build -o ./$(binaryName)
 build: $(binaryName)
 
 port ?= 3000
-run:
+run: build
 	./$(binaryName) serve --port=$(port)
+
+clean::
+	-rm GoBookstoreAPI
 
 #Run with helm
 helmDeploymentName ?= bookstorehelm
@@ -16,7 +24,7 @@ helmInstall:
 	helm install $(helmDeploymentName) deploy/helm
 	-kubectl get nodes -o wide
 
-helmUninstall:
+clean::
 	-helm uninstall $(helmDeploymentName)
 
 #Run with docker
@@ -39,11 +47,9 @@ dockerLogin:
 dockerPush: dockerImage dockerLogin
 	docker push $(imageName):$(tag)
 
-clean: helmUninstall
-	-rm GoBookstoreAPI
+clean::
 	-docker kill $(binaryName)
 	-docker rm $(binaryName)
-	#docker rmi -f $$(docker images $(imageName):$(tag) -a -q)
 
-cleanAll: clean
+cleanAll:: clean
 	docker rmi -f $$(docker images $(imageName):$(tag) -a -q)

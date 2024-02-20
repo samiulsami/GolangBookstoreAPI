@@ -126,7 +126,7 @@ The API endpoints are exposed on the internal IP of the node on port 30000
 
 Compile and run the binary:
 
-``make``
+``make run``
 
 Run with docker:
 
