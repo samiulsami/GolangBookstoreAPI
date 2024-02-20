@@ -121,3 +121,25 @@ The API endpoints are exposed on the internal IP of the node on port 30000
 ## Run using Helm chart
 
 ``helm install bookstorehelm deploy/helm``
+
+## Makefile
+
+Compile and run the binary:
+
+``make``
+
+Run with docker:
+
+``make dockerRun``
+
+Run with helm:
+
+``make helmInstall``
+
+Push docker image to dockerhub:
+
+``make dockerPush DOCKER_USER='username' DOCKER_PASSWORD='password'``
+
+Stop and delete all running binaries/containers/pods:
+
+``make cleanAll``
