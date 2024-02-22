@@ -83,13 +83,6 @@ curl --location --request DELETE 'http://localhost:3000/api/v1/books/{1}' \
 ```
 ----
 
-## References
-
-- https://github.com/shn27/BookStoreApi-Go
-- https://github.com/MobarakHsn/api-server
-- https://github.com/golang-jwt/jwt
-- https://pkg.go.dev/github.com/golang-jwt/jwt/v5#New
-
 ## Build and run Docker Image
 
 Create a .env file with the appropriate username, password, and JWTSecretKey (see the .env.example file)
@@ -99,6 +92,8 @@ Run the following commands:
 ``docker build -t sami7786/gobookstoreapi:latest .``
 
 ``docker run -p 3000:3000 sami7786/gobookstoreapi``
+
+---
 
 ## Run with Kind
 
@@ -118,9 +113,13 @@ The API endpoints are exposed on the internal IP of the node on port 30000
 
 ``kubectl delete deployment --all``
 
+---
+
 ## Run using Helm chart
 
 ``helm install bookstorehelm deploy/helm``
+
+---
 
 ## Makefile
 
@@ -147,3 +146,14 @@ Push docker image to dockerhub:
 Stop and delete all running binaries/containers/pods:
 
 ``make cleanAll``
+
+---
+
+
+## References
+
+- https://github.com/shn27/BookStoreApi-Go
+- https://github.com/MobarakHsn/api-server
+- https://github.com/golang-jwt/jwt
+- https://pkg.go.dev/github.com/golang-jwt/jwt/v5#New
+- https://github.com/anisurrahman75/bookserver-api-mysql
