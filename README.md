@@ -143,7 +143,7 @@ Push docker image to dockerhub:
 
 ``make dockerPush DOCKER_USER='username' DOCKER_PASSWORD='password'``
 
-Stop and delete all running binaries/containers/pods:
+Stop and delete all binaries/containers/pods:
 
 ``make cleanAll``
 
