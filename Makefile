@@ -1,10 +1,3 @@
-#Push changes to remote repository
-commitMessage ?= "from makefile"
-gitPush:
-	git add .
-	git commit -m $(commitMessage)
-	git push
-
 #Compile and run the binary
 binaryName ?= GoBookstoreAPI
 $(binaryName):
@@ -46,6 +39,13 @@ dockerLogin:
 	@docker login -u $(DOCKER_USER) -p $(DOCKER_PASS)
 dockerPush: dockerImage dockerLogin
 	docker push $(imageName):$(tag)
+
+#Push changes to remote repository
+commitMessage ?= "from makefile"
+gitPush:
+	git add .
+	git commit -m $(commitMessage)
+	git push
 
 clean::
 	-docker kill $(binaryName)
