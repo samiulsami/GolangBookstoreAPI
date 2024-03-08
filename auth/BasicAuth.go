@@ -2,6 +2,7 @@ package auth
 
 import (
 	"GoBookstoreAPI/db"
+	"GoBookstoreAPI/prometheusMetrics"
 	"encoding/base64"
 	"net/http"
 	"strings"
@@ -10,6 +11,7 @@ import (
 // /middleware
 func BasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		prometheusMetrics.BasicAuthAttempts.Inc()
 		authHeader := req.Header.Get("Authorization")
 		if authHeader == "" {
 			res.WriteHeader(http.StatusUnauthorized)
@@ -53,5 +55,6 @@ func BasicAuth(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(res, req)
+		prometheusMetrics.BasicAuthSuccess.Inc()
 	})
 }

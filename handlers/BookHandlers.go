@@ -37,11 +37,13 @@ func GetBook(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusOK)
 	res.Write(body)
+	prometheusMetrics.BookGetCounter.Inc()
 }
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	res.Write(db.BookDB.GetBookList())
+	prometheusMetrics.BookGetAllCounter.Inc()
 }
 
 func DeleteBook(res http.ResponseWriter, req *http.Request) {
@@ -56,6 +58,7 @@ func DeleteBook(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte("Successfully deleted the book with UUID: " + uuid))
+	prometheusMetrics.BookDeleteCounter.Inc()
 }
 
 func UpdateBook(res http.ResponseWriter, req *http.Request) {
@@ -80,4 +83,5 @@ func UpdateBook(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusCreated)
 	res.Write([]byte("Successfully updated the book with UUID: " + uuid))
+	prometheusMetrics.BookUpdateCounter.Inc()
 }

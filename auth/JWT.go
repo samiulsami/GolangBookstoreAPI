@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"GoBookstoreAPI/prometheusMetrics"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
@@ -56,7 +57,7 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 
 func JWTAuthenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-
+		prometheusMetrics.JWTAuthAttempts.Inc()
 		extractor := request.BearerExtractor{}
 		bearerToken, err := extractor.ExtractToken(req)
 
@@ -95,7 +96,9 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 				res.Write([]byte("Authorization failed"))
 				return
 			}
+
 			next.ServeHTTP(res, req)
+			prometheusMetrics.JWTAuthSuccess.Inc()
 		}
 	})
 }
