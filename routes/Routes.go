@@ -3,7 +3,6 @@ package routes
 import (
 	"GoBookstoreAPI/auth"
 	"GoBookstoreAPI/handlers"
-	chiprometheus "github.com/edmarfelipe/chi-prometheus"
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 func StartAPI(host string, port string) {
 	r := chi.NewRouter()
 	r.Use(CommonHeaders)
-	r.Use(chiprometheus.NewMiddleware("serviceName"))
 	r.Handle("/metrics", promhttp.Handler())
 
 	r.Group(func(r chi.Router) {
