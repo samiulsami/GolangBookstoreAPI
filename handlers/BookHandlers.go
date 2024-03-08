@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"GoBookstoreAPI/db"
+	"GoBookstoreAPI/prometheusMetrics"
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
@@ -21,6 +22,7 @@ func AddBook(res http.ResponseWriter, req *http.Request) {
 	uuid := db.BookDB.AddBook(&newBook)
 	res.WriteHeader(http.StatusCreated)
 	res.Write([]byte("Book added. UUID: " + uuid))
+	prometheusMetrics.BookAddCounter.Inc()
 }
 
 func GetBook(res http.ResponseWriter, req *http.Request) {
