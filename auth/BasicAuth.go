@@ -46,7 +46,7 @@ func BasicAuth(next http.Handler) http.Handler {
 		decodedString := string(decodedCredentials)
 		idx := strings.Index(decodedString, ":")
 
-		username, password := decodedString[:idx], decodedString[idx+1:]
+		username, password := strings.Trim(decodedString[:idx], " \n\n\t"), strings.Trim(decodedString[idx+1:], " \n\n\t")
 
 		if pass, ok := db.Users[username]; !ok || pass != password {
 			res.WriteHeader(http.StatusUnauthorized)

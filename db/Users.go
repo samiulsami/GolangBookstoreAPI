@@ -4,6 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strings"
 )
 
 type userDB map[string]string
@@ -15,7 +16,9 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	Users = make(map[string]string)
 
-	Users[os.Getenv("AdminUsername")] = os.Getenv("AdminPassword")
+	Users = make(map[string]string)
+	adminUsername := strings.Trim(os.Getenv("AdminUsername"), " \n\n\t")
+	adminPassword := strings.Trim(os.Getenv("AdminPassword"), " \n\n\t")
+	Users[adminUsername] = adminPassword
 }

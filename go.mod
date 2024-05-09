@@ -1,6 +1,6 @@
 module GoBookstoreAPI
 
-go 1.21
+go 1.22.2
 
 require (
 	github.com/edmarfelipe/chi-prometheus v0.0.0-20221230172703-da25ca380563

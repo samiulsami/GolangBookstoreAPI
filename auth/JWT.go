@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	secret = []byte(os.Getenv("JWTSECRET"))
+	secret = []byte(strings.Trim(os.Getenv("JWTSECRET"), " \n\n\t"))
 }
 
 // /Sets cookie and returns the JWT token
@@ -31,7 +32,7 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 
 	var username string = ""
 	if err != nil {
-		username = os.Getenv("AdminUsername")
+		username = strings.Trim(os.Getenv("AdminUsername"), " \n\n\t")
 	} else if name, ok := bodyMap["username"]; ok {
 		username = name
 	}
