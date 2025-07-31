@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,10 +15,15 @@ spec:
     spec:
       containers:
         - name: my-app
-          image: sami7786/gobookstoreapi:latest
-          imagePullPolicy: IfNotPresent
+          image: sami7786/gobookstoreapi:jaeger
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: jaeger-collector.observability.svc:4318
+            - name: adminusername
+              value: admin
 ---
 apiVersion: v1
 kind: Service

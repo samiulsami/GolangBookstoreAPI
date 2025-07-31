@@ -19,19 +19,19 @@ spec:
           ports:
             - containerPort: {{ .Values.ports.containerPort }}
           env:
-            - name: AdminUsername
+            - name: adminusername
               valueFrom:
                 secretKeyRef:
-                  key: adminUsername
+                  key: adminusername
                   name: {{ .Values.secret.name}}
-            - name: AdminPassword
+            - name: adminpassword
               valueFrom:
                 secretKeyRef:
-                  key: adminPassword
+                  key: adminpassword
                   name: {{ .Values.secret.name}}
-            - name: JWTSECRET
+            - name: jwtsecret
               valueFrom:
                 secretKeyRef:
-                  key: jwtSecret
+                  key: jwtsecret
                   name: {{ .Values.secret.name}}
 

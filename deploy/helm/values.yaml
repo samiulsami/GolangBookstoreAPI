@@ -1,7 +1,7 @@
+---
 appName: gobookstoreapi
 containerName: my-app
 replicas: 3
-
 serviceName: gobookstoreapi-service
 imagePullPolicy: IfNotPresent
 specType: LoadBalancer
@@ -10,15 +10,14 @@ ports:
   containerPort: 3000
   targetPort: 3000
   nodePort: 30000
-
 secret:
   name: env-secrets
   namespace: default
   data:
-    adminUsername: admin22
-    adminPassword: admin72
-    jwtSecret: orangeCat
-
+    adminusername: admin22
+    adminpassword: admin72
+    jwtsecret: orangeCat
 image:
   name: sami7786/gobookstoreapi
   tag: latest
+
