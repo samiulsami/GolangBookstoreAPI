@@ -1,23 +1,41 @@
 ---
-appName: gobookstoreapi
-containerName: my-app
-replicas: 3
-serviceName: gobookstoreapi-service
-imagePullPolicy: IfNotPresent
-specType: LoadBalancer
-ports:
-  protocol: TCP
-  containerPort: 3000
-  targetPort: 3000
-  nodePort: 30000
-secret:
-  name: env-secrets
-  namespace: default
-  data:
-    adminusername: admin22
-    adminpassword: admin72
-    jwtsecret: orangeCat
-image:
-  name: sami7786/gobookstoreapi
-  tag: latest
+gobookstoreapi:
+  appName: gobookstoreapi
+  containerName: gobookstoreapi-app
+  replicas: 2
 
+  image:
+    name: sami7786/gobookstoreapi
+    tag: jaeger
+    pullPolicy: Always
+
+  serviceName: gobookstoreapi-service
+  specType: LoadBalancer
+
+  ports:
+    protocol: TCP
+    containerPort: 3000
+    targetPort: 3000
+    nodePort: 30000
+
+  secret:
+    name: env-secrets
+    namespace: default
+    data:
+      adminusername: admin
+      adminpassword: admin
+      jwtsecret: orangecat
+
+jaeger:
+  appName: jaeger
+  image:
+    name: jaegertracing/all-in-one
+    tag: "1.52"
+    pullPolicy: Always
+
+  namespace: observability
+  host: jaeger-collector.observability.svc
+  HTTPCollectorPort: 14268
+  OTLPgRPCPort: 4317
+  OTLPHTTPPort: 4318
+  UIPort: 16686

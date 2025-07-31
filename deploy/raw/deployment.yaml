@@ -14,7 +14,7 @@ spec:
         app: gobookstoreapi
     spec:
       containers:
-        - name: my-app
+        - name: gobookstoreapi-app
           image: sami7786/gobookstoreapi:jaeger
           imagePullPolicy: Always
           ports:
@@ -24,6 +24,10 @@ spec:
               value: jaeger-collector.observability.svc:4318
             - name: adminusername
               value: admin
+            - name: adminpassword
+              value: admin
+            - name: jwtsecret
+              value: orangeCat
 ---
 apiVersion: v1
 kind: Service
