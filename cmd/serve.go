@@ -3,9 +3,10 @@ package cmd
 import (
 	"GoBookstoreAPI/routes"
 	"fmt"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var serveCmd = &cobra.Command{

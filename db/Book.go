@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"strings"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 type Book struct {
@@ -23,84 +24,86 @@ type bookDBType struct {
 	books map[string]*Book
 }
 
-var BookDB bookDBType
-var ErrBookNotFound = errors.New("No books found with the given UUID")
+var (
+	BookDB          bookDBType
+	ErrBookNotFound = errors.New("no books found with the given UUID")
+)
 
 func init() {
 	BookDB = bookDBType{books: make(map[string]*Book)}
 }
 
-func (this *Book) IsValid() bool {
-	if this == nil {
+func (book *Book) IsValid() bool {
+	if book == nil {
 		return false
 	}
 
-	if this.Name == "" || this.ISBN == "" || this.AuthorList == nil || this.PublishDate == "" {
+	if book.Name == "" || book.ISBN == "" || book.AuthorList == nil || book.PublishDate == "" {
 		return false
 	}
 
 	return true
 }
 
-func (this *bookDBType) uuidExists(uuid *string) bool {
-	_, ok := this.books[*uuid]
+func (bookdb *bookDBType) uuidExists(uuid *string) bool {
+	_, ok := bookdb.books[*uuid]
 	return ok
 }
 
-func (this *bookDBType) BookExists(uuid string) bool {
-	this.RLock()
-	defer this.RUnlock()
-	return this.uuidExists(&uuid)
+func (bookdb *bookDBType) BookExists(uuid string) bool {
+	bookdb.RLock()
+	defer bookdb.RUnlock()
+	return bookdb.uuidExists(&uuid)
 }
 
 // returns "UUID"
-func (this *bookDBType) AddBook(newBook *Book) string {
-	this.Lock()
-	defer this.Unlock()
+func (bookdb *bookDBType) AddBook(newBook *Book) string {
+	bookdb.Lock()
+	defer bookdb.Unlock()
 
-	var newUUID string = (uuid.New()).String()
-	for ; this.uuidExists(&newUUID); newUUID = (uuid.New()).String() {
+	newUUID := (uuid.New()).String()
+	for ; bookdb.uuidExists(&newUUID); newUUID = (uuid.New()).String() {
 	}
 	newBook.UUID = newUUID
-	this.books[newUUID] = newBook
+	bookdb.books[newUUID] = newBook
 
 	return newUUID
 }
 
-func (this *bookDBType) DeleteBook(uuid string) (bool, error) {
-	this.Lock()
-	defer this.Unlock()
+func (bookdb *bookDBType) DeleteBook(uuid string) (bool, error) {
+	bookdb.Lock()
+	defer bookdb.Unlock()
 
-	if !this.uuidExists(&uuid) {
+	if !bookdb.uuidExists(&uuid) {
 		return false, ErrBookNotFound
 	}
 
-	delete(this.books, uuid)
+	delete(bookdb.books, uuid)
 	return true, nil
 }
 
-func (this *bookDBType) UpdateBook(updatedBook *Book) (bool, error) {
-	this.Lock()
-	defer this.Unlock()
+func (bookdb *bookDBType) UpdateBook(updatedBook *Book) (bool, error) {
+	bookdb.Lock()
+	defer bookdb.Unlock()
 
-	if !this.uuidExists(&(*updatedBook).UUID) {
+	if !bookdb.uuidExists(&(*updatedBook).UUID) {
 		return false, ErrBookNotFound
 	}
 
-	this.books[(*updatedBook).UUID] = updatedBook
+	bookdb.books[(*updatedBook).UUID] = updatedBook
 	return true, nil
 }
 
 // /returns a single book as json object, if it exists
-func (this *bookDBType) GetBook(uuid string) ([]byte, error) {
-	this.RLock()
-	defer this.RUnlock()
+func (bookdb *bookDBType) GetBook(uuid string) ([]byte, error) {
+	bookdb.RLock()
+	defer bookdb.RUnlock()
 
-	if !(this.uuidExists(&uuid)) {
+	if !(bookdb.uuidExists(&uuid)) {
 		return []byte(""), ErrBookNotFound
 	}
 
-	tmp, err := json.MarshalIndent((*this).books[uuid], " ", "   ")
+	tmp, err := json.MarshalIndent((*bookdb).books[uuid], " ", "   ")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -108,14 +111,14 @@ func (this *bookDBType) GetBook(uuid string) ([]byte, error) {
 	return tmp, nil
 }
 
-func (this *bookDBType) getAllBooks() ([][]byte, error) {
-	this.RLock()
-	defer this.RUnlock()
+func (bookdb *bookDBType) getAllBooks() ([][]byte, error) {
+	bookdb.RLock()
+	defer bookdb.RUnlock()
 
 	var bookList [][]byte
 
-	for i, _ := range this.books {
-		tmp, err := json.MarshalIndent(this.books[i], " ", "   ")
+	for i := range bookdb.books {
+		tmp, err := json.MarshalIndent(bookdb.books[i], " ", "   ")
 		if err != nil {
 			return [][]byte{}, err
 		}
@@ -126,8 +129,8 @@ func (this *bookDBType) getAllBooks() ([][]byte, error) {
 }
 
 // returns a json array of books as a byte slice
-func (this *bookDBType) GetBookList() []byte {
-	bytes, err := this.getAllBooks()
+func (bookdb *bookDBType) GetBookList() []byte {
+	bytes, err := bookdb.getAllBooks()
 	if err != nil {
 		fmt.Println(err)
 		return []byte("[]")

@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -20,6 +21,5 @@ func Execute() {
 }
 
 func init() {
-
 	rootCmd.Flags().String("port", "8000", "Port of the server")
 }

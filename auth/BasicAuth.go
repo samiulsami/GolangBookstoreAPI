@@ -4,6 +4,7 @@ import (
 	"GoBookstoreAPI/db"
 	"GoBookstoreAPI/prometheusMetrics"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -15,7 +16,9 @@ func BasicAuth(next http.Handler) http.Handler {
 		authHeader := req.Header.Get("Authorization")
 		if authHeader == "" {
 			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Authorization header not found"))
+			if _, err := res.Write([]byte("Authorization header not found")); err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 
@@ -23,7 +26,9 @@ func BasicAuth(next http.Handler) http.Handler {
 
 		if len(authHeaderSplit) != 2 {
 			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Invalid authorization credentials"))
+			if _, err := res.Write([]byte("Invalid authorization credentials")); err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 
@@ -31,26 +36,31 @@ func BasicAuth(next http.Handler) http.Handler {
 
 		if authType != "Basic" {
 			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Authorization type must be \"Basic\""))
+			if _, err := res.Write([]byte("Invalid authorization type")); err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 
 		decodedCredentials, err := base64.StdEncoding.DecodeString(encodedCredentials)
-
 		if err != nil {
 			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Failed to decode credentials"))
+			if _, err := res.Write([]byte("Failed to decode credentials")); err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 
 		decodedString := string(decodedCredentials)
 		idx := strings.Index(decodedString, ":")
 
-		username, password := strings.Trim(decodedString[:idx], " \n\n\t"), strings.Trim(decodedString[idx+1:], " \n\n\t")
+		username, password := strings.Trim(decodedString[:idx], " \n\t"), strings.Trim(decodedString[idx+1:], " \n\t")
 
 		if pass, ok := db.Users[username]; !ok || pass != password {
 			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Invalid Credentials"))
+			if _, err := res.Write([]byte("Invalid Credentials")); err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 

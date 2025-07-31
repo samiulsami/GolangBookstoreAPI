@@ -1,10 +1,11 @@
 package db
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type userDB map[string]string
@@ -18,7 +19,7 @@ func init() {
 	}
 
 	Users = make(map[string]string)
-	adminUsername := strings.Trim(os.Getenv("AdminUsername"), " \n\n\t")
-	adminPassword := strings.Trim(os.Getenv("AdminPassword"), " \n\n\t")
+	adminUsername := strings.Trim(os.Getenv("AdminUsername"), " \n\t")
+	adminPassword := strings.Trim(os.Getenv("AdminPassword"), " \n\t")
 	Users[adminUsername] = adminPassword
 }

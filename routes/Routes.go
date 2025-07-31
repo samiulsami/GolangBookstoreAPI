@@ -3,9 +3,11 @@ package routes
 import (
 	"GoBookstoreAPI/auth"
 	"GoBookstoreAPI/handlers"
+	"log"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
 )
 
 func StartAPI(host string, port string) {
@@ -27,7 +29,9 @@ func StartAPI(host string, port string) {
 		r.Put("/api/v1/books/{id}", handlers.UpdateBook)
 	})
 
-	http.ListenAndServe(host+":"+port, r)
+	if err := http.ListenAndServe(host+":"+port, r); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func CommonHeaders(next http.Handler) http.Handler {

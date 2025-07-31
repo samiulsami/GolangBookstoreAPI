@@ -4,25 +4,28 @@ import (
 	"GoBookstoreAPI/prometheusMetrics"
 	"encoding/json"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/golang-jwt/jwt/v5/request"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5/request"
+	"github.com/joho/godotenv"
 )
 
-var ValidityDurationInSeconds int32 = 300
-var secret []byte
+var (
+	ValidityDurationInSeconds int32 = 300
+	secret                    []byte
+)
 
 func init() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	secret = []byte(strings.Trim(os.Getenv("JWTSECRET"), " \n\n\t"))
+	secret = []byte(strings.Trim(os.Getenv("JWTSECRET"), " \n\t"))
 }
 
 // /Sets cookie and returns the JWT token
@@ -30,18 +33,20 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 	var bodyMap map[string]string
 	err := json.NewDecoder(req.Body).Decode(&bodyMap)
 
-	var username string = ""
+	username := ""
 	if err != nil {
-		username = strings.Trim(os.Getenv("AdminUsername"), " \n\n\t")
+		username = strings.Trim(os.Getenv("AdminUsername"), " \n\t")
 	} else if name, ok := bodyMap["username"]; ok {
 		username = name
 	}
 
 	token, err := createToken(username)
-
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
-		res.Write([]byte("Unable to create bearer token"))
+		if _, err := res.Write([]byte("Unable to create bearer token")); err != nil {
+			fmt.Println(err)
+		}
+		return
 	}
 
 	cookie := http.Cookie{
@@ -53,7 +58,9 @@ func GetJWTToken(res http.ResponseWriter, req *http.Request) {
 
 	http.SetCookie(res, &cookie)
 	res.WriteHeader(http.StatusOK)
-	res.Write([]byte("Bearer Token: " + token + "\nCookie set"))
+	if _, err := res.Write([]byte("Bearer Token: " + token + "\nCookie set")); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func JWTAuthenticator(next http.Handler) http.Handler {
@@ -67,7 +74,9 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 			valid, err := verifyToken(bearerToken)
 			if err != nil || !valid {
 				res.WriteHeader(http.StatusUnauthorized)
-				res.Write([]byte("Invalid bearer token"))
+				if _, err := res.Write([]byte("Invalid bearer token")); err != nil {
+					fmt.Println(err)
+				}
 				return
 			}
 
@@ -76,16 +85,16 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 
 		default:
 			cookie, err := req.Cookie("jwt")
-
 			if err != nil {
 				res.WriteHeader(http.StatusBadRequest)
-				res.Write([]byte("Cookie is invalid or nonexistent"))
+				if _, err := res.Write([]byte("Cookie is invalid or nonexistent")); err != nil {
+					fmt.Println(err)
+				}
 				return
 			}
 
 			token := cookie.Value
 			valid, err := verifyToken(token)
-
 			if err != nil {
 				res.WriteHeader(http.StatusBadRequest)
 				fmt.Println(err)
@@ -94,7 +103,9 @@ func JWTAuthenticator(next http.Handler) http.Handler {
 
 			if !valid {
 				res.WriteHeader(http.StatusUnauthorized)
-				res.Write([]byte("Authorization failed"))
+				if _, err := res.Write([]byte("Authorization failed")); err != nil {
+					fmt.Println(err)
+				}
 				return
 			}
 
@@ -121,7 +132,7 @@ func createToken(username string) (string, error) {
 func verifyToken(tokenString string) (bool, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return secret, nil
 	})
