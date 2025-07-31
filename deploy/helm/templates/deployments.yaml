@@ -1,0 +1,73 @@
+# bookstoreapi deployments:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gobookstoreapi.appName }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.gobookstoreapi.appName }}
+  replicas: {{ .Values.gobookstoreapi.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gobookstoreapi.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.gobookstoreapi.containerName }}
+          image: "{{ .Values.gobookstoreapi.image.name}}:{{ .Values.gobookstoreapi.image.tag}}"
+          imagePullPolicy: {{ .Values.gobookstoreapi.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.gobookstoreapi.ports.containerPort }}
+          env:
+            - name: adminusername
+              valueFrom:
+                secretKeyRef:
+                  key: adminusername
+                  name: {{ .Values.gobookstoreapi.secret.name}}
+            - name: adminpassword
+              valueFrom:
+                secretKeyRef:
+                  key: adminpassword
+                  name: {{ .Values.gobookstoreapi.secret.name}}
+            - name: jwtsecret
+              valueFrom:
+                secretKeyRef:
+                  key: jwtsecret
+                  name: {{ .Values.gobookstoreapi.secret.name}}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.jaeger.host }}:{{ .Values.jaeger.OTLPHTTPPort | int }}"
+
+# jaeger/otel deployments:
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.jaeger.namespace }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.jaeger.appName }}
+  namespace: {{ .Values.jaeger.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.jaeger.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.jaeger.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.jaeger.appName }}
+          image: "{{ .Values.jaeger.image.name }}:{{ .Values.jaeger.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.jaeger.UIPort }}
+            - containerPort: {{ .Values.jaeger.HTTPCollectorPort }}
+            - containerPort: {{ .Values.jaeger.OTLPgRPCPort }}
+            - containerPort: {{ .Values.jaeger.OTLPHTTPPort }}
+

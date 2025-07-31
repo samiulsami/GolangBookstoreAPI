@@ -99,25 +99,25 @@ Run the following commands:
 
 ``kind create cluster``
 
-``kubectl apply -f deploy/raw/deployment.yaml``
-
-~~kubectl get pods~~
-
-~~kubectl logs -f $pod_name~~
+``kubectl apply -f deploy/raw/``
 
 ~~kubectl port-forward $pod_name 3000:3000~~
+
+``kubectl port-forward -n observability svc/jaeger-ui 16686:80``
 
 ``kubectl get nodes -o wide``
 
 The API endpoints are exposed on the internal IP of the node on port 30000
 
-``kubectl delete deployment --all``
-
 ---
 
 ## Run using Helm chart
 
-``helm install bookstorehelm deploy/helm``
+```bash
+helm install bookstorehelm deploy/helm
+kubectl port-forward svc/gobookstoreapi-service 3000:3000
+kubectl port-forward -n observability svc/jaeger-ui 16686:80
+```
 
 ---
 

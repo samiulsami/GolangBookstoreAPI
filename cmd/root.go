@@ -11,6 +11,10 @@ var rootCmd = &cobra.Command{
 	Use:   "bookstore",
 	Short: "bookstore REST API written in Go",
 	Long:  `bookstore REST API written in Golang`,
+	Run: func(_ *cobra.Command, _ []string) {
+		fmt.Println("bookstore REST API written in Go")
+		fmt.Println("To start the server, pass the arguments 'serve --port <port>'")
+	},
 }
 
 func Execute() {
@@ -18,8 +22,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rootCmd.Flags().String("port", "8000", "Port of the server")
 }

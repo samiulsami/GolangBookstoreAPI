@@ -6,7 +6,7 @@ RUN go build .
 FROM busybox
 WORKDIR /compiled
 ENV BOOKSTORE_LISTEN=0.0.0.0
-COPY --from=builder /src/GoBookstoreAPI /src/.env /compiled/
+COPY --from=builder /src/GoBookstoreAPI /compiled/
 
 ENTRYPOINT ["./GoBookstoreAPI"]
 CMD ["serve", "--port=3000"]
