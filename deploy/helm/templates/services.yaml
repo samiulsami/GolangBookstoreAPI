@@ -6,6 +6,10 @@ metadata:
   name: {{ .Values.gobookstoreapi.serviceName }}
   labels:
     app: {{ .Values.gobookstoreapi.appName }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "{{ .Values.gobookstoreapi.ports.containerPort }}"
 spec:
   selector:
     app: {{ .Values.gobookstoreapi.appName }}

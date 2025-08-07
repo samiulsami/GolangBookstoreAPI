@@ -117,6 +117,7 @@ The API endpoints are exposed on the internal IP of the node on port 30000
 helm install bookstorehelm deploy/helm
 kubectl port-forward svc/gobookstoreapi-service 3000:3000
 kubectl port-forward -n observability svc/jaeger-ui 16686:80
+kubectl port-forward svc/perses 8080:8080
 ```
 
 ---
