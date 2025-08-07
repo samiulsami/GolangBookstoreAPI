@@ -2,5 +2,8 @@ dependencies:
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 27.28.2
-digest: sha256:7a23fb8ec5df47bafb320f99f2313eb12184da5f77276e6019b9654a5ffeb4ab
-generated: "2025-08-07T14:32:05.087948231+06:00"
+- name: perses
+  repository: https://perses.github.io/helm-charts
+  version: 0.14.6
+digest: sha256:f2dc480756710b3f3f9e12916cb70be90c4d8f3ea3f8520210ce71586ad88ed4
+generated: "2025-08-07T17:34:27.133498475+06:00"
