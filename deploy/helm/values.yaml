@@ -3,21 +3,19 @@ gobookstoreapi:
   appName: gobookstoreapi
   containerName: gobookstoreapi-app
   replicas: 2
-
+  namespace: default
   image:
     name: sami7786/gobookstoreapi
     tag: jaeger
     pullPolicy: Always
-
   serviceName: gobookstoreapi-service
   specType: LoadBalancer
-
   ports:
+    name: bookstoreapi-service-port
     protocol: TCP
     containerPort: 3000
     targetPort: 3000
     nodePort: 30000
-
   secret:
     name: env-secrets
     namespace: default
@@ -30,12 +28,64 @@ jaeger:
   appName: jaeger
   image:
     name: jaegertracing/all-in-one
-    tag: "1.52"
+    tag: '1.52'
     pullPolicy: Always
-
   namespace: observability
   host: jaeger-collector.observability.svc
   HTTPCollectorPort: 14268
   OTLPgRPCPort: 4317
   OTLPHTTPPort: 4318
   UIPort: 16686
+
+perses:
+  image:
+    name: persesdev/perses
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+    portName: http
+    type: ClusterIP
+  sidecar:
+    enabled: true
+    label: perses.dev/resource
+    labelValue: 'true'
+    allNamespaces: true
+  extraObjects:
+    - apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: perses-config
+        namespace: default
+        labels:
+          app.kubernetes.io/name: perses
+          app.kubernetes.io/instance: gobookstoreapi
+      data:
+        config.yaml: |
+          database:
+            file:
+              folder: /perses
+              extension: json
+          provisioning:
+            folders:
+              - /app/config
+            interval: 10m
+    - apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: perses-prometheus-datasource
+        namespace: default
+      data:
+        config.yaml: |
+          apiVersion: perses.dev/v1alpha1
+          kind: Datasource
+          metadata:
+            name: prometheus-datasource
+            namespace: default
+            labels:
+              perses.dev/resource: 'true'
+          spec:
+            default: true
+            plugin:
+              kind: PrometheusDatasource
+              spec:
+                directUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090

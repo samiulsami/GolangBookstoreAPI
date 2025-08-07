@@ -12,13 +12,15 @@ clean::
 	-rm GoBookstoreAPI
 
 #Run with helm
-helmDeploymentName ?= bookstorehelm
+helmDeploymentName ?= gobookstoreapi
 helmInstall:
+	helm install $(helmDeploymentName)-prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
 	helm install $(helmDeploymentName) deploy/helm
 	-kubectl get nodes -o wide
 
 clean::
 	-helm uninstall $(helmDeploymentName)
+	-helm uninstall $(helmDeploymentName)-prometheus -n monitoring
 
 #Run with docker
 imageName ?= sami7786/gobookstoreapi
