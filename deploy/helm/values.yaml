@@ -45,7 +45,7 @@ perses:
   appName: perses
   namespace: default
   image:
-    name: ghcr.io/perses/perses
+    name: persesdev/perses
     tag: latest
 
   serviceSpecType: NodePort
