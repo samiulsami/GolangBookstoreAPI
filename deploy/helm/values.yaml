@@ -3,6 +3,7 @@ gobookstoreapi:
   appName: gobookstoreapi
   containerName: gobookstoreapi-app
   replicas: 2
+  namespace: default
 
   image:
     name: sami7786/gobookstoreapi
@@ -39,3 +40,20 @@ jaeger:
   OTLPgRPCPort: 4317
   OTLPHTTPPort: 4318
   UIPort: 16686
+
+perses:
+  appName: perses
+  namespace: default
+  image:
+    name: ghcr.io/perses/perses
+    tag: latest
+
+  serviceSpecType: NodePort
+  containerPort: 8080
+  prometheusURL: http://gobookstoreapi-prometheus-server.default.svc.cluster.local
+
+prometheus:
+  server:
+    enabled: true
+    service:
+      type: ClusterIP
