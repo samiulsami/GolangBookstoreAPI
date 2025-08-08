@@ -4,21 +4,17 @@ gobookstoreapi:
   containerName: gobookstoreapi-app
   replicas: 2
   namespace: default
-
   image:
     name: sami7786/gobookstoreapi
     tag: jaeger
     pullPolicy: Always
-
   serviceName: gobookstoreapi-service
   specType: LoadBalancer
-
   ports:
     protocol: TCP
     containerPort: 3000
     targetPort: 3000
     nodePort: 30000
-
   secret:
     name: env-secrets
     namespace: default
@@ -31,9 +27,8 @@ jaeger:
   appName: jaeger
   image:
     name: jaegertracing/all-in-one
-    tag: "1.52"
+    tag: '1.52'
     pullPolicy: Always
-
   namespace: observability
   host: jaeger-collector.observability.svc
   HTTPCollectorPort: 14268
