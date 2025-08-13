@@ -40,52 +40,75 @@ jaeger:
 perses:
   image:
     name: persesdev/perses
+    version: v0.52
     pullPolicy: IfNotPresent
   service:
     port: 8080
     portName: http
     type: ClusterIP
-  sidecar:
-    enabled: true
-    label: perses.dev/resource
-    labelValue: 'true'
-    allNamespaces: true
-  extraObjects:
-    - apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: perses-config
-        namespace: default
-        labels:
-          app.kubernetes.io/name: perses
-          app.kubernetes.io/instance: gobookstoreapi
-      data:
-        config.yaml: |
-          database:
-            file:
-              folder: /perses
-              extension: json
-          provisioning:
-            folders:
-              - /app/config
-            interval: 10m
-    - apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: perses-prometheus-datasource
-        namespace: default
-      data:
-        config.yaml: |
-          apiVersion: perses.dev/v1alpha1
-          kind: Datasource
-          metadata:
-            name: prometheus-datasource
-            namespace: default
-            labels:
-              perses.dev/resource: 'true'
-          spec:
-            default: true
-            plugin:
-              kind: PrometheusDatasource
-              spec:
-                directUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+  config:
+    datasource:
+      global:
+        discovery:
+          - name: my_discovery
+            refresh_interval: 15s
+            kubernetes_sd:
+              datasource_plugin_kind: PrometheusDatasource
+              namespace: monitoring
+              service_configuration:
+                enable: true
+                port_name: http-web
+                port_number: 9090
+                service_type: ClusterIP
+              labels:
+                app: kube-prometheus-stack-prometheus
+                app.kubernetes.io/instance: prometheus
+                app.kubernetes.io/managed-by: Helm
+                app.kubernetes.io/part-of: kube-prometheus-stack
+                release: prometheus
+  # datasources:
+  #   - apiVersion: perses.dev/v1alpha1
+  #     kind: Datasource
+  #     metadata:
+  #       name: prometheus-datasource
+  #       namespace: default
+  #       labels:
+  #         perses.dev/resource: 'true'
+  #     spec:
+  #       default: true
+  #       plugin:
+  #         kind: PrometheusDatasource
+  #         spec:
+  #           proxy:
+  #             kind: HTTPProxy
+  #             spec:
+  #               url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+
+  # sidecar:
+  #   enabled: true
+  #   label: perses.dev/resource
+  #   labelValue: 'true'
+  #   allNamespaces: true
+  # extraObjects:
+  #   - apiVersion: v1
+  #     kind: ConfigMap
+  #     metadata:
+  #       name: perses-prometheus-datasource
+  #       namespace: default
+  #     data:
+  #       datasources.yaml: |-
+  #         kind: Datasource
+  #         metadata:
+  #           name: prometheus-datasource
+  #           namespace: default
+  #           labels:
+  #             perses.dev/resource: 'true'
+  #         spec:
+  #           default: true
+  #           plugin:
+  #             kind: PrometheusDatasource
+  #             spec:
+  #               proxy:
+  #                 kind: "HTTPProxy"
+  #                 spec:
+  #                   url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090

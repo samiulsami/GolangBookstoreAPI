@@ -1,0 +1,24 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-perses-prometheus-reader
+  namespace: monitoring
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-perses-read-prometheus
+  namespace: monitoring
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}-perses
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Release.Name }}-perses-prometheus-reader
+  apiGroup: rbac.authorization.k8s.io
