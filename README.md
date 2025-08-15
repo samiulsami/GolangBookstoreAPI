@@ -95,19 +95,19 @@ Run the following commands:
 
 ---
 
-## Run with Kind *(outdated)*
+~~## Run with raw manifests (Outdated)~~
 
-``kind create cluster``
+~~``kind create cluster``~~
 
-``kubectl apply -f deploy/raw/``
+~~``kubectl apply -f deploy/raw/``~~
 
 ~~kubectl port-forward $pod_name 3000:3000~~
 
-``kubectl port-forward -n observability svc/jaeger-ui 16686:80``
+~~``kubectl port-forward -n observability svc/jaeger-ui 16686:80``~~
 
-``kubectl get nodes -o wide``
+~~``kubectl get nodes -o wide``~~
 
-The API endpoints are exposed on the internal IP of the node on port 30000
+~~The API endpoints are exposed on the internal IP of the node on port 30000~~
 
 ---
 
