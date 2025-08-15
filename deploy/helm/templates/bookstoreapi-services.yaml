@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gobookstoreapi.serviceName }}
+  namespace: {{ .Values.gobookstoreapi.namespace }}
+  labels:
+    release: prometheus
+    app: {{ .Values.gobookstoreapi.appName }}
+spec:
+  selector:
+    app: {{ .Values.gobookstoreapi.appName }}
+  type: {{ .Values.gobookstoreapi.specType }}
+  ports:
+    - name: {{ .Values.gobookstoreapi.ports.name }}
+      protocol: {{ .Values.gobookstoreapi.ports.protocol }}
+      port:  {{ .Values.gobookstoreapi.ports.containerPort }}
+      targetPort: {{ .Values.gobookstoreapi.ports.targetPort }}
+      nodePort: {{ .Values.gobookstoreapi.ports.nodePort }}

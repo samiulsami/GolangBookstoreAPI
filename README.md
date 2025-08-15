@@ -95,28 +95,31 @@ Run the following commands:
 
 ---
 
-## Run with Kind
+~~## Run with raw manifests (Outdated)~~
 
-``kind create cluster``
+~~``kind create cluster``~~
 
-``kubectl apply -f deploy/raw/``
+~~``kubectl apply -f deploy/raw/``~~
 
 ~~kubectl port-forward $pod_name 3000:3000~~
 
-``kubectl port-forward -n observability svc/jaeger-ui 16686:80``
+~~``kubectl port-forward -n observability svc/jaeger-ui 16686:80``~~
 
-``kubectl get nodes -o wide``
+~~``kubectl get nodes -o wide``~~
 
-The API endpoints are exposed on the internal IP of the node on port 30000
+~~The API endpoints are exposed on the internal IP of the node on port 30000~~
 
 ---
 
 ## Run using Helm chart
 
 ```bash
-helm install bookstorehelm deploy/helm
+helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+helm install gobookstoreapi deploy/helm
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 kubectl port-forward svc/gobookstoreapi-service 3000:3000
 kubectl port-forward -n observability svc/jaeger-ui 16686:80
+kubectl port-forward svc/perses 8080:8080
 ```
 
 ---

@@ -1,0 +1,23 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.gobookstoreapi.appName }}-servicemonitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: {{ .Values.gobookstoreapi.appName }}
+    app.kubernetes.io/part-of: kube-prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      release: prometheus
+      app: {{ .Values.gobookstoreapi.appName }}
+  endpoints:
+    - port: bookstoreapi-service-port
+      path: /metrics
+      interval: "30s"
+      scheme: http
